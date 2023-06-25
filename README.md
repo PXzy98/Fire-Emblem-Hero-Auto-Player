@@ -26,6 +26,23 @@ If you find any question while using, welcome to ask me for help
       - **/pics/loot/colors/red_hide_with_pos**
       - **/pics/loot/colors/white_with_pos**
       - **/pics/loot/colors/white_hide_with_pos**
+- **/pics/aftergame_close.png**
+- **/pics/auto_confirm.png**
+- **/pics/auto_ingame.png**
+- **/pics/backward.png**
+- **/pics/give_up.png**
+- **/pics/haschamp.png**
+- **/pics/main_ticked.png**
+- **/pics/over.png**
+- **/pics/refill.png**
+- **/pics/second_ticked.png**
+- **/pics/skip.png**
+- **/pics/ship_green.png**
+- **/pics/stage_clear.png**
+- **/pics/stage_clear_part.png**
+- **/pics/start_fight.png**
+- **/pics/start_fight_ingame.png**
+
 
 ## Requirements
 

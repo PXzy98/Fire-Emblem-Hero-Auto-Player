@@ -55,7 +55,7 @@ If you find any question while using, welcome to ask me for help
 - pip install configparser
 
 ## How to use it
-
+---
 Firstly, you need to take screenshots of the major buttons and icons as templates, they are listed in the "Folder structure" part above. I will provide the templates i used for testing in the sample_pics folder, but they may not be useful even if the settings for emulators are the same with me, due to the slightly difference in the interface(some emulator count the sidebar within the resolution and some are not). I strongly suggest to take screenshot by your own and **keep in mind that once if you change the quality of the resources in game**, the previous templates may not work as well.
 ---
 Secondly, you need to turn off necessary settings in environment settings. For example, the animations.

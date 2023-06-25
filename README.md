@@ -27,12 +27,12 @@ Warning! The author is not liable for any direct or indirect losses caused by th
 
 ## Requirements
 
-pip install pygetwindow
-pip install opencv-python
-pip install pyautogui
-pip install numpy
-pip install scikit-image
-pip install tkinter
-pip install configparser
+- pip install pygetwindow
+- pip install opencv-python
+- pip install pyautogui
+- pip install numpy
+- pip install scikit-image
+- pip install tkinter
+- pip install configparser
 
 ## How to use it

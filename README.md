@@ -58,7 +58,28 @@ If you find any question while using, welcome to ask me for help
 
 Firstly, you need to take screenshots of the major buttons and icons as templates, they are listed in the "Folder structure" part above. I will provide the templates i used for testing in the sample_pics folder, but they may not be useful even if the settings for emulators are the same with me, due to the slightly difference in the interface(some emulator count the sidebar within the resolution and some are not). I strongly suggest to take screenshot by your own and **keep in mind that once if you change the quality of the resources in game**, the previous templates may not work as well.
 
----
-
 Secondly, you need to turn off necessary settings in environment settings. For example, the animations.
 ![ingame settings](sample_pictures/e_settings.png)
+
+---
+
+After these, you can start to configuration to run the program.
+
+---
+
+![ingame settings](sample_pictures/main_menu_1.png.png)
+For main story passer, you need to enter the window name depends on the emulator you are using, it doesn't need to be the completed name of the window, you can use the keyword for doing this, but it may consider other window as the emulator for inacurate keywords.
+For the template_path, it was once designed to be the absolute path for the template folder, but i was to lazy to change. So, the template folder is right now fixed to be the under same folder with the code / executable file. But you can use different suffixes for the program to take into different folders for differemt tasks. For example, the default folder is /pics/first_level, and you need to running this for hard difficulty, you may take the screenshots again as templates, and create a /pics/first_level_hard folder to store these. Then you only need to add "_hard" to the template_name entry. Remember, changing this setting does not change the recognition of the buttons, so if you want to change the resolution of the emulator, you need to manully replace the templates under pics folder.
+The slider for threshold is represents the tolerance of how similar the button image in the emulator compares to the template, you can ajust the value based on the running situation.
+The radio buttons below decides the algorithm to check the templates in main and second level menu, the second option would actively reduce the matching results with tick icon, and the first option would not. So the first option may cause the program accidentally select the passed level in game with low threshold, and the second would not recognize the icons correctly with high threshold. Please test and take a suitable threshold in your own environment.
+The last two options give user the ability toi ajust where would the program click on after it gets the cordinates of recognized template. As the image recogniction method may give the coordinates with slightly offset, such as located at the top left corner and the buttons would not be correctly clicked, you can add some offset to correct this.
+
+After all, you can start to use the tool. you should go to the menu listed below.
+
+![ingame settings](sample_pictures/first level.png)
+
+It will go through a whole story directly. But you stil need to change to another story manully, as i dont think it would be needed to pass all the story at once. By the way, you need to make sure your team gets strong enough, it will terminate if defeated.
+
+---
+
+For wish helper,

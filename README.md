@@ -63,7 +63,7 @@ If you find any question while using, welcome to ask me for help
 
 ---
 
-> After these, you can start to configuration to run the program.
+ After these, you can start to configuration to run the program.
 
 ---
 
@@ -82,7 +82,7 @@ If you find any question while using, welcome to ask me for help
 
 ![ingame settings](sample_pictures/first_level.png)
 
-> It will go through a whole story directly. But you stil need to change to another story manully, as i dont think it would be needed to pass all the story at once. By the way, you need to make sure your team gets strong enough, it will terminate if defeated.
+It will go through a whole story directly. But you stil need to change to another story manully, as i dont think it would be needed to pass all the story at once. By the way, you need to make sure your team gets strong enough, it will terminate if defeated.
 
 ---
 

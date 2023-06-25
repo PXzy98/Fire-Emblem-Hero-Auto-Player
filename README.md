@@ -67,7 +67,7 @@ After these, you can start to configuration to run the program.
 
 ---
 
-![ingame settings](sample_pictures/main_menu_1.png.png)
+![ingame settings](sample_pictures/main_menu_1.png)
 For main story passer, you need to enter the window name depends on the emulator you are using, it doesn't need to be the completed name of the window, you can use the keyword for doing this, but it may consider other window as the emulator for inacurate keywords.
 For the template_path, it was once designed to be the absolute path for the template folder, but i was to lazy to change. So, the template folder is right now fixed to be the under same folder with the code / executable file. But you can use different suffixes for the program to take into different folders for differemt tasks. For example, the default folder is /pics/first_level, and you need to running this for hard difficulty, you may take the screenshots again as templates, and create a /pics/first_level_hard folder to store these. Then you only need to add "_hard" to the template_name entry. Remember, changing this setting does not change the recognition of the buttons, so if you want to change the resolution of the emulator, you need to manully replace the templates under pics folder.
 The slider for threshold is represents the tolerance of how similar the button image in the emulator compares to the template, you can ajust the value based on the running situation.
@@ -76,7 +76,7 @@ The last two options give user the ability toi ajust where would the program cli
 
 After all, you can start to use the tool. you should go to the menu listed below.
 
-![ingame settings](sample_pictures/first level.png)
+![ingame settings](sample_pictures/first_level.png)
 
 It will go through a whole story directly. But you stil need to change to another story manully, as i dont think it would be needed to pass all the story at once. By the way, you need to make sure your team gets strong enough, it will terminate if defeated.
 

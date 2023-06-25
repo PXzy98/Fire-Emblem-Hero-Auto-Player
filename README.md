@@ -25,3 +25,14 @@ Warning! The author is not liable for any direct or indirect losses caused by th
       - **/pics/loot/colors/white_with_pos**
       - **/pics/loot/colors/white_hide_with_pos**
 
+## Requirements
+
+pip install pygetwindow
+pip install opencv-python
+pip install pyautogui
+pip install numpy
+pip install scikit-image
+pip install tkinter
+pip install configparser
+
+## How to use it

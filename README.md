@@ -13,7 +13,7 @@ Warning! The author is not liable for any direct or indirect losses caused by th
   - **/config/config_passer.ini** Stores the settings for story passer
 - **/pics**: This folder holds the necessary templates for image recognition
   - **/pics/first_level**: Contains the templates for main menu. Since the icon is animated, so you can add different exclamation marks and corner of the icon in the folder for better recognition. 
-  - **/pics/second_level**: Contains the templates for second menu, and the same with above one. detailed usage would be explained below.
+  - **/pics/second_level**: Contains the templates for second menu, and the same with above one. *Detailed usage would be explained below.*
   - **/pics/loot**: Contains the templates for loot helper
     - **/pics/loot/colors/**: Groups the templates with different colors
       - **/pics/loot/colors/blue_with_pos**
@@ -24,3 +24,4 @@ Warning! The author is not liable for any direct or indirect losses caused by th
       - **/pics/loot/colors/red_hide_with_pos**
       - **/pics/loot/colors/white_with_pos**
       - **/pics/loot/colors/white_hide_with_pos**
+

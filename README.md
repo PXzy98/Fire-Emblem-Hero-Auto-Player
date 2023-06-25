@@ -56,9 +56,9 @@ If you find any question while using, welcome to ask me for help
 
 ## How to use it
 
-> Firstly, you need to take screenshots of the major buttons and icons as templates, they are listed in the "Folder structure" part above. I will provide the templates i used for testing in the sample_pics folder, but they may not be useful even if the settings for emulators are the same with me, due to the slightly difference in the interface(some emulator count the sidebar within the resolution and some are not). I strongly suggest to take screenshot by your own and **keep in mind that once if you change the quality of the resources in game**, the previous templates may not work as well.
+ Firstly, you need to take screenshots of the major buttons and icons as templates, they are listed in the "Folder structure" part above. I will provide the templates i used for testing in the sample_pics folder, but they may not be useful even if the settings for emulators are the same with me, due to the slightly difference in the interface(some emulator count the sidebar within the resolution and some are not). I strongly suggest to take screenshot by your own and **keep in mind that once if you change the quality of the resources in game**, the previous templates may not work as well.
 
-> Secondly, you need to turn off necessary settings in environment settings. For example, the animations.
+ Secondly, you need to turn off necessary settings in environment settings. For example, the animations.
 ![ingame settings](sample_pictures/e_settings.png)
 
 ---
@@ -86,4 +86,6 @@ If you find any question while using, welcome to ask me for help
 
 ---
 
-For wish helper,
+For wish helper, the basic logic is the same. but the templat_path should under pics/loot folder.
+
+In this scenario, the requirements of the accuracy for recognition of the orbs and the buttons would differ. So, i created 

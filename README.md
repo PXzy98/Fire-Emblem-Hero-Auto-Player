@@ -118,6 +118,7 @@ Below, you can enter the basic settings, like what colors of orbs you want and h
 And if you have a targeted character to go for, you can take a screenshot in the stats confirmation page, and select it in the interface like the image showing above with how many you want. The program would detect how many characters you selected are acquired, it will stop the wishing progress once the number reaches the quantity you needed. Otherwise, it will shut down when the program reaches the limits of wish number.
 
 > For the selection screenshot, as the background in the confirmation page is not the same with the actual wishing interface, you would need to select the part which would be the exactly the same in both pages. i would give an example below.
+> 
 > ![target_img](sample_pictures/target_3.png)
 
 The last two options is quite the same with story passer, it gives user the ability toi ajust where would the program click on after it gets the cordinates of recognized template. As the image recogniction method may give the coordinates with slightly offset, such as located at the top left corner and the buttons would not be correctly clicked, you can add some offset to correct this.

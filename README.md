@@ -114,7 +114,8 @@ And if you have a targeted character to go for, you can take a screenshot in the
 
 The last two options is quite the same with story passer, it gives user the ability toi ajust where would the program click on after it gets the cordinates of recognized template. As the image recogniction method may give the coordinates with slightly offset, such as located at the top left corner and the buttons would not be correctly clicked, you can add some offset to correct this.
 
->At the end, the mode options is based on which image recognition package to be use in the program(only for orbs). For openCV, it would not be able to differ white and green with lower threshold(for me, 0.93). On the other hand, i provided an option for skimage method, the weakness of this method would be speed, it would be very very very very slow for processing, but apprently acurrate. 
+At the end, the mode options is based on which image recognition package to be use in the program(only for orbs). 
+>For openCV, it would not be able to differ white and green with lower threshold(for me, 0.93). On the other hand, i provided an option for skimage method, the weakness of this method would be speed, it would be very very very very slow for processing, but apprently acurrate. 
 >
 >By using openCV, i would suggest to make the threshold as high as it can recognize things(i was running this with 0.95 and it passed 200 wishes without any mistakes), and it has the advantages to take cover of the animation of the orbs, as you can add orbs images with different animation in the folder and it would process it with acceptable speed.
 >

@@ -1,22 +1,18 @@
 import multiprocessing
 import os
-import sys
 import tkinter as tk
 from datetime import datetime
-# from threading import Thread, Event
 from tkinter import ttk, filedialog
-import time
 import configparser
 import story_passer
 import loot_helper
-import math
 import pygetwindow as gw
 
 
 class PasserProcess:
 
     # def __init__(self, difficulty, window_name):
-    def __init__(self, difficulty, window_name, log_file, general_threshold, mode, x_offset, y_offset):
+    def __init__(self, difficulty, window_name, log_file, general_threshold, mode, x_offset, y_offset, skip):
         self.mode = mode
         self.diff = difficulty
         self.window_name = window_name
@@ -24,6 +20,7 @@ class PasserProcess:
         self.pass_threshold = general_threshold
         self.x_offset_num = int(x_offset)
         self.y_offset_num = int(y_offset)
+        self.skip_mode = skip
         self.process = None
         self.stop_event = multiprocessing.Event()
         self.queue = multiprocessing.Queue()
@@ -45,7 +42,7 @@ class PasserProcess:
         self.process.terminate()
         self.process.join()
 
-    def update(self, difficulty, window_name, log_file, general_threshold, mode, x_offset, y_offset):
+    def update(self, difficulty, window_name, log_file, general_threshold, mode, x_offset, y_offset, skip):
         self.diff = difficulty
         self.window_name = window_name
         self.log_name = log_file
@@ -53,13 +50,14 @@ class PasserProcess:
         self.mode = mode
         self.x_offset_num = int(x_offset)
         self.y_offset_num = int(y_offset)
+        self.skip_mode = skip
 
     def run_loop(self):
         while not self.stop_event.is_set():
             # Processing logic
 
             result = story_passer.execute(self.diff, self.window_name, self.log_name, self.pass_threshold, self.mode,
-                                          self.x_offset_num, self.y_offset_num)
+                                          self.x_offset_num, self.y_offset_num,self.skip_mode)
             # result = story_passer.execute()
 
             # Update GUI by putting data in the queue
@@ -177,11 +175,12 @@ class RunningFrame(tk.Frame):
         self.slider = tk.Scale(input_area, from_=0, to=1, resolution=0.01, orient="horizontal", length=250)
         self.slider.grid(row=3, column=1, padx=10, pady=10)
         self.mode_var = tk.StringVar()
+        self.skip_var = tk.StringVar()
         # p1 = PasserProcess(diff, window_name)
 
         # Create a variable to store the selected mode
         radio_frame = tk.Frame(input_area)
-        radio_frame.grid(row=4, column=0, columnspan=2)
+        radio_frame.grid(row=5, column=0, columnspan=2)
         mode_label = tk.Label(radio_frame, text="mode:")
         mode_label.grid(row=0, column=0, padx=10, pady=10)
         # Create the radio button options
@@ -190,8 +189,19 @@ class RunningFrame(tk.Frame):
 
         radio_option2 = tk.Radiobutton(radio_frame, text="排除钩子算法", variable=self.mode_var, value="2")
         radio_option2.grid(row=0, column=2, padx=5, pady=5)
+
+        mode_label_2 = tk.Label(radio_frame, text="Skip Mode:")
+        mode_label_2.grid(row=1, column=0, padx=10, pady=10)
+        # Create the radio button options
+        radio_option1_2 = tk.Radiobutton(radio_frame, text="阅读剧情", variable=self.skip_var, value="1")
+        radio_option1_2.grid(row=1, column=1, padx=5, pady=5)
+
+        radio_option2_2 = tk.Radiobutton(radio_frame, text="跳过剧情", variable=self.skip_var, value="2")
+        radio_option2_2.grid(row=1, column=2, padx=5, pady=5)
+
         offset_frame = tk.Frame(input_area)
-        offset_frame.grid(row=5, column=0, columnspan=4)
+        offset_frame.grid(row=4, column=0, columnspan=4)
+
         self.x_label = tk.Label(offset_frame, text="X_offset", anchor='e', justify='left')
         self.x_label.grid(row=0, column=0, padx=2)
 
@@ -207,10 +217,10 @@ class RunningFrame(tk.Frame):
         self.y_slider.grid(row=0, column=3, padx=2)
 
         button_frame = tk.Frame(input_area)
-        button_frame.grid(row=6, column=0, columnspan=2)
+        button_frame.grid(row=7, column=0, columnspan=2)
 
         self.p1 = PasserProcess(self.template_path_entry.get(), self.window_name_entry.get(), self.log_name,
-                                self.slider.get(), self.mode_var.get(), self.x_slider.get(), self.y_slider.get())
+                                self.slider.get(), self.mode_var.get(), self.x_slider.get(), self.y_slider.get(),self.skip_var.get())
 
         start_button = tk.Button(button_frame, text="Start", command=self.p_start)
         start_button.grid(row=0, column=3, padx=20, pady=5)
@@ -223,7 +233,7 @@ class RunningFrame(tk.Frame):
 
     def p_start(self):
         self.p1.update(self.template_path_entry.get(), self.window_name_entry.get(), self.log_name, self.slider.get(),
-                       self.mode_var.get(), self.x_slider.get(), self.y_slider.get())
+                       self.mode_var.get(), self.x_slider.get(), self.y_slider.get(),self.skip_var.get())
         self.p1.start()
 
     def create_config_file_if_not_exists(self):
@@ -233,7 +243,7 @@ class RunningFrame(tk.Frame):
 
         if not os.path.isfile(self.config_file):
             self.config['Settings'] = {'window_name': 'MuMu模拟器12', 'pass_threshold': '0.7', 'template_path': '_hard',
-                                       'mode': "1", 'x_offset': '0', "y_offset": "0"}
+                                       'mode': "1", 'x_offset': '0', "y_offset": "0","skip_mode":"1"}
             with open(self.config_file, 'w') as file:
                 self.config.write(file)
 
@@ -244,6 +254,7 @@ class RunningFrame(tk.Frame):
         mode = self.config.get('Settings', 'mode', fallback='')
         x_offset = self.config.get('Settings', 'x_offset', fallback='')
         y_offset = self.config.get('Settings', 'y_offset', fallback='')
+        skip_mode = self.config.get('Settings', 'skip_mode', fallback='')
         x, y, width, height = 0, 0, 0, 0
         try:
             window = gw.getWindowsWithTitle(window_name)[0]
@@ -267,6 +278,7 @@ class RunningFrame(tk.Frame):
         self.slider.set(float(pass_threshold))
         self.x_slider.set(int(x_offset))
         self.y_slider.set(int(y_offset))
+        self.skip_var.set(skip_mode)
         # print(pass_threshold)
         # return default_value
 
@@ -277,9 +289,10 @@ class RunningFrame(tk.Frame):
         mode = self.mode_var.get()
         x_offset = self.x_slider.get()
         y_offset = self.y_slider.get()
+        skip_mode = self.skip_var.get()
         self.config['Settings'] = {'window_name': window_name, 'pass_threshold': pass_threshold,
                                    'template_path': template_path, 'mode': mode,
-                                   'x_offset': x_offset, "y_offset": y_offset}
+                                   'x_offset': x_offset, "y_offset": y_offset, "skip_mode" : skip_mode}
         with open(self.config_file, 'w') as file:
             self.config.write(file)
 

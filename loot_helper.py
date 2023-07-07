@@ -1,13 +1,10 @@
 import os
 import sys
 import pygetwindow as gw
-import pyautogui
 import time
 import cv2
 import pyautogui
 import numpy as np
-import tkinter as tk
-import contextlib
 from datetime import datetime
 from skimage.feature import match_template
 from skimage.io import imread
@@ -236,7 +233,7 @@ def color_checker(mode, threshold, color, c_fold):
             except Exception as e:
                 print("*", end="", flush=True)
         if icon_y is not None:
-            pyautogui.moveTo(icon_x + x_offset, icon_y + y_offset)
+            pyautogui.moveTo(x + icon_x + x_offset,y + icon_y + y_offset)
             pyautogui.click()
             print(" 完成", flush=True)
             return True
@@ -251,7 +248,7 @@ def color_checker(mode, threshold, color, c_fold):
             except Exception as e:
                 print("*", end="", flush=True)
         if icon_y is not None:
-            pyautogui.moveTo(icon_x + x_offset, icon_y + y_offset)
+            pyautogui.moveTo(x + icon_x + x_offset, y + icon_y + y_offset)
             pyautogui.click()
             print(" 完成", flush=True)
             return True

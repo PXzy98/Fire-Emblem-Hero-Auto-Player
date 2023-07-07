@@ -13,8 +13,8 @@ import numpy as np
 x, y, width, height = None, None, None, None
 x_offset, y_offset = 0, 0
 
+def skip_now_first(skip_mode,text, pass_threshold):
 
-def skip_now(text, pass_threshold):
     time.sleep(2)
     with open(os.devnull, 'w') as devnull:
         old_stdout = sys.stdout
@@ -22,9 +22,48 @@ def skip_now(text, pass_threshold):
         st_flag = False
         # fight_action_passer("pics/aftergame_close.png")
         # time.sleep(1)
-        if fight_action_passer_with_control("pics/skip.png", pass_threshold) or fight_action_passer_with_control(
-                "pics/skip_green.png", pass_threshold):
-            st_flag = True
+        if skip_mode == "1":
+            if check_image_similar_with_control("pics/skip.png", pass_threshold) == False or check_image_similar_with_control("pics/skip_green.png", pass_threshold) == False:
+                # time.sleep(300)
+                print("chengle!!!!!!!!")
+            while check_image_similar_with_control("pics/skip.png", pass_threshold) or check_image_similar_with_control(
+                    "pics/skip_green.png", pass_threshold):
+                pyautogui.moveTo((x + 20), (y + height / 2))
+                pyautogui.click()
+                time.sleep(5)
+                st_flag = True
+        elif skip_mode == "2":
+            if fight_action_passer_with_control("pics/skip.png", pass_threshold) or fight_action_passer_with_control(
+                    "pics/skip_green.png", pass_threshold):
+                st_flag = True
+        sys.stdout = old_stdout
+
+        if st_flag:
+            print(text + "skip SUCCESS", flush=True)
+        else:
+            print(text + "skip NOT FOUND", flush=True)
+
+    time.sleep(2)
+
+def skip_now(skip_mode,text, pass_threshold):
+
+    time.sleep(2)
+    with open(os.devnull, 'w') as devnull:
+        old_stdout = sys.stdout
+        sys.stdout = devnull
+        st_flag = False
+        # fight_action_passer("pics/aftergame_close.png")
+        # time.sleep(1)
+        if skip_mode == "1":
+            while check_image_similar_with_control("pics/skip.png", pass_threshold) or check_image_similar_with_control("pics/skip_green.png", pass_threshold):
+                pyautogui.moveTo((x + 20), (y + height / 2))
+                pyautogui.click()
+                time.sleep(5)
+                st_flag = True
+        elif skip_mode == "2":
+            if fight_action_passer_with_control("pics/skip.png", pass_threshold) or fight_action_passer_with_control(
+                    "pics/skip_green.png", pass_threshold):
+                st_flag = True
         sys.stdout = old_stdout
 
         if st_flag:
@@ -72,53 +111,6 @@ def check_image_similar_with_control(template_path, digit1):
     matches = zip(*locations[::-1])
 
     # Iterate over the matches
-    for match in matches:
-        icon_x, icon_y = match
-        return icon_x, icon_y
-
-
-def check_image(folder_path, pass_threshold, mode):
-    matches = []
-    screenshot = pyautogui.screenshot()
-    screenshot_gray = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2GRAY)
-    if mode == 1:
-        for filename in os.listdir(folder_path):
-            if filename.endswith('.png') or filename.endswith('.jpg'):
-                template_path = os.path.join(folder_path, filename)
-                template = cv2.imread(template_path, 0)
-                result = cv2.matchTemplate(screenshot_gray, template, cv2.TM_CCOEFF_NORMED)
-                threshold = pass_threshold
-                locations = np.where(result >= threshold)
-                template_matches = zip(*locations[::-1])
-                matches.extend(template_matches)
-    elif mode == 2:
-
-        threshold = pass_threshold
-
-        matches = []
-        screenshot = pyautogui.screenshot()
-        screenshot_gray = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2GRAY)
-        proximity_threshold = 70
-
-        exclusion_icon_path = "pics/cross.png"
-        exclusion_icon_template = cv2.imread(exclusion_icon_path, 0)
-        exclusion_result = cv2.matchTemplate(screenshot_gray, exclusion_icon_template, cv2.TM_CCOEFF_NORMED)
-        exclusion_locations = np.where(exclusion_result >= threshold)
-        exclusion_matches = set(zip(*exclusion_locations[::-1]))
-
-        for filename in os.listdir(folder_path):
-            if filename.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp')):
-                template_path = os.path.join(folder_path, filename)
-                template = cv2.imread(template_path, 0)
-                result = cv2.matchTemplate(screenshot_gray, template, cv2.TM_CCOEFF_NORMED)
-                locations = np.where(result >= threshold)
-                template_matches = set(zip(*locations[::-1]))
-                for match in template_matches:
-                    if not any(abs(ex[0] - match[0]) <= proximity_threshold and abs(
-                            ex[1] - match[1]) <= proximity_threshold
-                               for ex in exclusion_matches):
-                        matches.append(match)
-
     for match in matches:
         icon_x, icon_y = match
         return icon_x, icon_y
@@ -299,7 +291,157 @@ def fight_action_passer_with_control(path, digit1):
     return False
 
 
-def start_fight(pass_threshold):
+# def start_fight(pass_threshold):
+#     # lower_threshold = 0.6
+#     # higher_threshold = 0.9
+#     if pass_threshold > 0.8:
+#         higher_threshold = 0.9
+#     else:
+#         higher_threshold = pass_threshold + 0.1
+#     if pass_threshold < 0.25:
+#         lower_threshold = 0.1
+#     else:
+#         lower_threshold = pass_threshold - 0.15
+#     if fight_action_passer_with_control("pics/haschamp.png", higher_threshold):
+#         time.sleep(2)
+#         fight_action_passer_with_control("pics/start_fight.png", pass_threshold)
+#         time.sleep(1)
+#         fight_action_passer_with_control("pics/refill.png", pass_threshold)
+#         time.sleep(2)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(2)
+#         pyautogui.click()
+#         skip_now("", pass_threshold)
+#         pyautogui.click()
+#         skip_now("", pass_threshold)
+#         fight_action_passer_with_control("pics/start_fight_ingame.png", pass_threshold)
+#         skip_now("", pass_threshold)
+#         fight_action_passer_with_control("pics/auto_ingame.png", pass_threshold)
+#         time.sleep(2)
+#         fight_action_passer_with_control("pics/auto_confirm.png", pass_threshold)
+#         skip_now("", pass_threshold)
+#         # time.sleep(20)
+#
+#         print("start fetching end game image:", end=" ", flush=True)
+#         with open(os.devnull, 'w') as devnull:
+#             old_stdout = sys.stdout
+#             sys.stdout = devnull
+#             st_flag = False
+#             for i in range(0, 120):
+#                 if fight_action_passer_with_control("pics/over.png", pass_threshold):
+#                     time.sleep(2)
+#                     fight_action_passer_with_control("pics/give_up.png", lower_threshold)
+#                     sys.stdout = old_stdout
+#                     print("Defeat!!!!!", flush=True)
+#                     exit()
+#                 skip_now("", pass_threshold)
+#                 time.sleep(1)
+#                 if fight_action_passer_with_control("pics/stage_clear.png", pass_threshold):
+#                     st_flag = True
+#                     break
+#                 elif fight_action_passer_with_control("pics/stage_clear_part.png", higher_threshold):
+#                     st_flag = True
+#                     sys.stdout = old_stdout
+#                     print("备用验证成功", end=" ", flush=True)
+#                     break
+#             sys.stdout = old_stdout
+#             if st_flag:
+#                 pyautogui.click()
+#                 print("fetching SUCCESS", flush=True)
+#             else:
+#                 print("fetching Failed", flush=True)
+#
+#         time.sleep(2)
+#         pyautogui.moveTo((x + 20), (y + height / 2))
+#         pyautogui.click()
+#         skip_now("First", pass_threshold)
+#         pyautogui.click()
+#         skip_now("Second", pass_threshold)
+#         pyautogui.click()
+#         skip_now("Thrid", pass_threshold)
+#         pyautogui.click()
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+#     else:
+#         time.sleep(2)
+#         fight_action_passer_with_control("pics/start_fight.png", pass_threshold)
+#         time.sleep(1)
+#         fight_action_passer_with_control("pics/refill.png", pass_threshold)
+#         time.sleep(2)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(2)
+#         pyautogui.click()
+#         skip_now("First ", pass_threshold)
+#         pyautogui.click()
+#         skip_now("Second ", pass_threshold)
+#         pyautogui.click()
+#         time.sleep(2)
+#         fight_action_passer_with_control("pics/start_fight_ingame.png", pass_threshold)
+#         skip_now("Third ", pass_threshold)
+#         fight_action_passer_with_control("pics/auto_ingame.png", pass_threshold)
+#         time.sleep(2)
+#         fight_action_passer_with_control("pics/auto_confirm.png", pass_threshold)
+#         skip_now("Final ", pass_threshold)
+#         # time.sleep(20)
+#
+#         print("start fetching end game image:", end=" ", flush=True)
+#         with open(os.devnull, 'w') as devnull:
+#             old_stdout = sys.stdout
+#             sys.stdout = devnull
+#             st_flag = False
+#             for i in range(0, 120):
+#                 if fight_action_passer_with_control("pics/over.png", pass_threshold):
+#                     time.sleep(2)
+#                     fight_action_passer_with_control("pics/give_up.png", lower_threshold)
+#                     sys.stdout = old_stdout
+#                     print("Defeat!!!!!", flush=True)
+#                     exit()
+#                 fight_action_passer_with_control("pics/skip.png", pass_threshold)
+#                 time.sleep(1)
+#                 if fight_action_passer_with_control("pics/stage_clear.png", pass_threshold):
+#                     st_flag = True
+#                     break
+#                 elif fight_action_passer_with_control("pics/stage_clear_part.png", higher_threshold):
+#                     st_flag = True
+#                     sys.stdout = old_stdout
+#                     print("备用验证成功", end=" ", flush=True)
+#                     break
+#             sys.stdout = old_stdout
+#
+#             if st_flag:
+#                 pyautogui.click()
+#                 print("fetching SUCCESS", flush=True)
+#             else:
+#                 print("fetching Failed", flush=True)
+#
+#         time.sleep(2)
+#         pyautogui.moveTo((x + 20), (y + height / 2))
+#         pyautogui.click()
+#         skip_now("First ", pass_threshold)
+#         skip_now("Second ", pass_threshold)
+#         skip_now("Third ", pass_threshold)
+#         pyautogui.click()
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+#         skip_now("羁绊 ", pass_threshold)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+#         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+#         time.sleep(1)
+
+def start_fight(skip_mode,pass_threshold):
     # lower_threshold = 0.6
     # higher_threshold = 0.9
     if pass_threshold > 0.8:
@@ -317,17 +459,16 @@ def start_fight(pass_threshold):
         fight_action_passer_with_control("pics/refill.png", pass_threshold)
         time.sleep(2)
         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
-        time.sleep(2)
+        time.sleep(5)
+        skip_now_first(skip_mode,"First", pass_threshold)
         pyautogui.click()
-        skip_now("", pass_threshold)
-        pyautogui.click()
-        skip_now("", pass_threshold)
+        skip_now(skip_mode,"Second", pass_threshold)
         fight_action_passer_with_control("pics/start_fight_ingame.png", pass_threshold)
-        skip_now("", pass_threshold)
+        skip_now(skip_mode,"Third", pass_threshold)
         fight_action_passer_with_control("pics/auto_ingame.png", pass_threshold)
         time.sleep(2)
         fight_action_passer_with_control("pics/auto_confirm.png", pass_threshold)
-        skip_now("", pass_threshold)
+        skip_now(skip_mode,"", pass_threshold)
         # time.sleep(20)
 
         print("start fetching end game image:", end=" ", flush=True)
@@ -342,7 +483,7 @@ def start_fight(pass_threshold):
                     sys.stdout = old_stdout
                     print("Defeat!!!!!", flush=True)
                     exit()
-                skip_now("", pass_threshold)
+                skip_now(skip_mode,"", pass_threshold)
                 time.sleep(1)
                 if fight_action_passer_with_control("pics/stage_clear.png", pass_threshold):
                     st_flag = True
@@ -362,11 +503,11 @@ def start_fight(pass_threshold):
         time.sleep(2)
         pyautogui.moveTo((x + 20), (y + height / 2))
         pyautogui.click()
-        skip_now("First", pass_threshold)
+        skip_now(skip_mode,"First", pass_threshold)
         pyautogui.click()
-        skip_now("Second", pass_threshold)
+        skip_now(skip_mode,"Second", pass_threshold)
         pyautogui.click()
-        skip_now("Thrid", pass_threshold)
+        skip_now(skip_mode,"Thrid", pass_threshold)
         pyautogui.click()
         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
         time.sleep(1)
@@ -385,19 +526,18 @@ def start_fight(pass_threshold):
         fight_action_passer_with_control("pics/refill.png", pass_threshold)
         time.sleep(2)
         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
-        time.sleep(2)
+        time.sleep(5)
+        skip_now_first(skip_mode, "First", pass_threshold)
         pyautogui.click()
-        skip_now("First ", pass_threshold)
-        pyautogui.click()
-        skip_now("Second ", pass_threshold)
+        skip_now(skip_mode,"Second ", pass_threshold)
         pyautogui.click()
         time.sleep(2)
         fight_action_passer_with_control("pics/start_fight_ingame.png", pass_threshold)
-        skip_now("Third ", pass_threshold)
+        skip_now(skip_mode,"Third ", pass_threshold)
         fight_action_passer_with_control("pics/auto_ingame.png", pass_threshold)
         time.sleep(2)
         fight_action_passer_with_control("pics/auto_confirm.png", pass_threshold)
-        skip_now("Final ", pass_threshold)
+        skip_now(skip_mode,"Final ", pass_threshold)
         # time.sleep(20)
 
         print("start fetching end game image:", end=" ", flush=True)
@@ -433,12 +573,13 @@ def start_fight(pass_threshold):
         time.sleep(2)
         pyautogui.moveTo((x + 20), (y + height / 2))
         pyautogui.click()
-        skip_now("First ", pass_threshold)
-        skip_now("Second ", pass_threshold)
-        skip_now("Third ", pass_threshold)
+        skip_now(skip_mode,"First ", pass_threshold)
+        skip_now(skip_mode,"Second ", pass_threshold)
+        skip_now(skip_mode,"Third ", pass_threshold)
         pyautogui.click()
         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
         time.sleep(1)
+        skip_now(skip_mode,"羁绊 ", pass_threshold)
         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
         time.sleep(1)
         fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
@@ -454,7 +595,7 @@ def test_current():
     print(x, y)
 
 
-def second_level_iter(diff, pass_threshold, mode_for_check):
+def second_level_iter(skip_mode,diff, pass_threshold, mode_for_check):
     while True:
 
         second_flag = main_stream_second_level_passer(diff, pass_threshold, mode_for_check)
@@ -475,15 +616,16 @@ def second_level_iter(diff, pass_threshold, mode_for_check):
                 fight_action_passer_with_control("pics/backward.png", pass_threshold)
                 return True
         time.sleep(2)
-        start_fight(pass_threshold)
+        start_fight(skip_mode,pass_threshold)
 
 
 # def execute(diff, window_name, text_box):
-def execute(diff, window_name, log_path, threshold, mode_of_check, x_num, y_num):
+def execute(diff, window_name, log_path, threshold, mode_of_check, x_num, y_num,skip):
     pass_threshold = float(threshold)
-    global x, y, width, height,x_offset,y_offset
+    global x, y, width, height, x_offset, y_offset
     stdout_to_file = StdoutToFile(log_path)
     stdout_to_file.start()
+    skip_mode = skip
     print("||||||||||||||||||||||||||||||||||")
     print("当前设定:")
     print("模板路径: ", end="")
@@ -500,7 +642,8 @@ def execute(diff, window_name, log_path, threshold, mode_of_check, x_num, y_num)
     print(x_num)
     print("Y_offset: ", end="")
     print(y_num)
-
+    print("Skip Mode: ", end="")
+    print(skip_mode, end="")
     x_offset = x_num
     y_offset = y_num
 
@@ -541,7 +684,7 @@ def execute(diff, window_name, log_path, threshold, mode_of_check, x_num, y_num)
                     stdout_to_file.stop()
                     exit()
             time.sleep(1)
-            if second_level_iter(diff, pass_threshold, mode_for_check):
+            if second_level_iter(skip_mode,diff, pass_threshold, mode_for_check):
                 print("返回一级", flush=True)
     except Exception as e:
         print(e, end="", flush=True)
@@ -574,8 +717,6 @@ class StdoutToFile:
 #     print("Shut down by user")
 # except Exception as e:
 #     print(e, end="")
-
-# read_consume("pics/99.png")
 
 # print (check_image_similar())
 # while True:

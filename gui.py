@@ -6,6 +6,7 @@ from tkinter import ttk, filedialog
 import configparser
 import story_passer
 import loot_helper
+import exp_practice
 import pygetwindow as gw
 
 
@@ -57,7 +58,7 @@ class PasserProcess:
             # Processing logic
 
             result = story_passer.execute(self.diff, self.window_name, self.log_name, self.pass_threshold, self.mode,
-                                          self.x_offset_num, self.y_offset_num,self.skip_mode)
+                                          self.x_offset_num, self.y_offset_num, self.skip_mode)
             # result = story_passer.execute()
 
             # Update GUI by putting data in the queue
@@ -131,6 +132,57 @@ class LootProcess:
             # self.template_path,self.log_name) result = story_passer.execute()
 
             # Update GUI by putting data in the queue
+            self.queue.put(result)
+
+
+class ExpProcess:
+
+    # def __init__(self, difficulty, window_name):
+    def __init__(self, window_name, log_file, general_threshold, x_offset, y_offset):
+
+        self.level = []
+        self.window_name = window_name
+        self.log_name = log_file
+        self.pass_threshold = general_threshold
+        self.x_offset_num = int(x_offset)
+        self.y_offset_num = int(y_offset)
+        self.process = None
+        self.stop_event = multiprocessing.Event()
+        self.queue = multiprocessing.Queue()
+        self.exp_obj = exp_practice.exp_practice()
+
+    def start(self):
+        if self.process is not None and self.process.is_alive():
+            return
+
+        self.stop_event.clear()
+        self.process = multiprocessing.Process(target=self.run_loop)
+        self.process.start()
+
+    def stop(self):
+        if self.process is None or not self.process.is_alive():
+            return
+
+        self.stop_event.set()
+        # self.process.join()
+        self.process.terminate()
+        self.process.join()
+
+    def update(self, level_list, window_name, log_file, general_threshold, x_offset, y_offset):
+        self.level = level_list
+        self.window_name = window_name
+        self.log_name = log_file
+        self.pass_threshold = general_threshold
+        self.x_offset_num = int(x_offset)
+        self.y_offset_num = int(y_offset)
+
+    def run_loop(self):
+        while not self.stop_event.is_set():
+            # Processing logic
+            result = self.exp_obj.execute(self.level, self.window_name, self.x_offset_num
+                                          , self.y_offset_num, self.pass_threshold, self.log_name)
+            # result = story_passer.execute()
+
             self.queue.put(result)
 
 
@@ -220,7 +272,8 @@ class RunningFrame(tk.Frame):
         button_frame.grid(row=7, column=0, columnspan=2)
 
         self.p1 = PasserProcess(self.template_path_entry.get(), self.window_name_entry.get(), self.log_name,
-                                self.slider.get(), self.mode_var.get(), self.x_slider.get(), self.y_slider.get(),self.skip_var.get())
+                                self.slider.get(), self.mode_var.get(), self.x_slider.get(), self.y_slider.get(),
+                                self.skip_var.get())
 
         start_button = tk.Button(button_frame, text="Start", command=self.p_start)
         start_button.grid(row=0, column=3, padx=20, pady=5)
@@ -233,7 +286,7 @@ class RunningFrame(tk.Frame):
 
     def p_start(self):
         self.p1.update(self.template_path_entry.get(), self.window_name_entry.get(), self.log_name, self.slider.get(),
-                       self.mode_var.get(), self.x_slider.get(), self.y_slider.get(),self.skip_var.get())
+                       self.mode_var.get(), self.x_slider.get(), self.y_slider.get(), self.skip_var.get())
         self.p1.start()
 
     def create_config_file_if_not_exists(self):
@@ -243,7 +296,7 @@ class RunningFrame(tk.Frame):
 
         if not os.path.isfile(self.config_file):
             self.config['Settings'] = {'window_name': 'MuMu模拟器12', 'pass_threshold': '0.7', 'template_path': '_hard',
-                                       'mode': "1", 'x_offset': '0', "y_offset": "0","skip_mode":"1"}
+                                       'mode': "1", 'x_offset': '0', "y_offset": "0", "skip_mode": "1"}
             with open(self.config_file, 'w') as file:
                 self.config.write(file)
 
@@ -292,7 +345,7 @@ class RunningFrame(tk.Frame):
         skip_mode = self.skip_var.get()
         self.config['Settings'] = {'window_name': window_name, 'pass_threshold': pass_threshold,
                                    'template_path': template_path, 'mode': mode,
-                                   'x_offset': x_offset, "y_offset": y_offset, "skip_mode" : skip_mode}
+                                   'x_offset': x_offset, "y_offset": y_offset, "skip_mode": skip_mode}
         with open(self.config_file, 'w') as file:
             self.config.write(file)
 
@@ -349,7 +402,7 @@ class RunningFrame2(tk.Frame):
 
         label = tk.Label(slider_frame, text="Wish Number :")
         label.grid(row=2, column=0, padx=10, pady=10)
-        self.slider3 = tk.Scale(slider_frame, from_=1, to=40, resolution=1, orient="horizontal", length=250)
+        self.slider3 = tk.Scale(slider_frame, from_=1, to=400, resolution=1, orient="horizontal", length=250)
         self.slider3.grid(row=2, column=1, padx=10, pady=10)
 
         selection_frame = tk.Frame(input_area)
@@ -506,6 +559,191 @@ class RunningFrame2(tk.Frame):
         # print("Selected colors:", self.selected_colors)
 
 
+class RunningFrame3(tk.Frame):
+    def __init__(self, i_frame, log_name, master=None, **kwargs):
+        #
+        #
+        #
+        super().__init__(master, **kwargs)
+        self.log_name = log_name
+        self.config_file = "config/config_exp.ini"
+        self.config = configparser.ConfigParser()
+
+        self.create_config_file_if_not_exists()
+
+        self.config.read(self.config_file)
+
+        input_area = ttk.LabelFrame(i_frame, text="Input_Area")
+        input_area.grid(row=1, column=0, padx=10, pady=10)
+        window_name_label = tk.Label(input_area, text="window_name:")
+        window_name_label.grid(row=0, column=0, padx=10, pady=10)
+        self.window_name_entry = tk.Entry(input_area, width=50)
+        self.window_name_entry.grid(row=0, column=1, padx=10, pady=10)
+
+        label = tk.Label(input_area, text="Thresholds :")
+        label.grid(row=3, column=0, padx=10, pady=10)
+
+        # Create a scale (slider) for values between 0 and 1
+        self.slider = tk.Scale(input_area, from_=0, to=1, resolution=0.01, orient="horizontal", length=250)
+        self.slider.grid(row=3, column=1, padx=10, pady=10)
+
+        offset_frame = tk.Frame(input_area)
+        offset_frame.grid(row=4, column=0, columnspan=4)
+
+        self.x_label = tk.Label(offset_frame, text="X_offset", anchor='e', justify='left')
+        self.x_label.grid(row=0, column=0, padx=2)
+
+        self.x_slider = tk.Scale(offset_frame, from_=-300, to=300, resolution=10, orient="horizontal", length=150)
+        self.x_slider.set(0)
+        self.x_slider.grid(row=0, column=1, padx=2)
+
+        self.y_label = tk.Label(offset_frame, text="Y_offset", anchor='e', justify='left')
+        self.y_label.grid(row=0, column=2, padx=2)
+
+        self.y_slider = tk.Scale(offset_frame, from_=-200, to=200, resolution=10, orient="horizontal", length=150)
+        self.y_slider.set(0)
+        self.y_slider.grid(row=0, column=3, padx=2)
+
+        button_frame = tk.Frame(input_area)
+        button_frame.grid(row=11, column=0, columnspan=2)
+
+        frame = ttk.LabelFrame(input_area, text="Mission list")
+        frame.grid(row=8, columnspan=2)
+
+        def insert_data(data):
+            for item in data:
+                tree.insert('', tk.END, values=item)
+
+        def update_data():
+            for item in tree.get_children():
+                tree.delete(item)
+
+            new_data = self.mission_data
+            insert_data(new_data)
+
+        tree = ttk.Treeview(frame, columns=('Mission_Name', 'Times'), show='headings')
+        tree.heading('Mission_Name', text='Mission_Name', anchor='center')
+        tree.heading('Times', text='Times', anchor='center')
+        tree.grid(row=0, column=0, sticky="nsew")
+
+        scrollbar = ttk.Scrollbar(frame, orient="vertical", command=tree.yview)
+        scrollbar.grid(row=0, column=1, sticky="ns")
+        tree.configure(yscrollcommand=scrollbar.set)
+
+        self.mission_data = []
+        insert_data(self.mission_data)
+
+        file_list = []
+        folder_path = "pics\\exp"
+
+        try:
+            files = os.listdir(folder_path)
+            for file in files:
+                # if file.endswith(".png"):
+                file_list.append(file)
+
+        except FileNotFoundError:
+            print(f"Folder not found: {folder_path}")
+
+        file_list.sort()
+        mission_frame = tk.Frame(input_area)
+        mission_frame.grid(row=10, column=0, columnspan=4, padx=10, pady=10)
+        combo_name_label = tk.Label(mission_frame, text="Mission:")
+        combo_name_label.grid(row=0, column=0, padx=10, pady=10)
+        self.combo_var = tk.StringVar(value=file_list[0])
+
+        self.combo = ttk.Combobox(mission_frame, textvariable=self.combo_var, state='readonly')
+        self.combo['values'] = file_list
+
+        self.combo.grid(row=0, column=1)
+        self.times_label = tk.Label(mission_frame, text="times", anchor='e', justify='left')
+        self.times_label.grid(row=0, column=2, padx=10)
+
+        self.times_slider = tk.Scale(mission_frame, from_=1, to=50, resolution=1, orient="horizontal", length=150)
+        self.times_slider.set(1)
+        self.times_slider.grid(row=0, column=3, padx=2)
+
+        def add_mission():
+            self.mission_data.append([self.combo_var.get(), self.times_slider.get()])
+            update_data()
+
+        def clear_mission():
+            self.mission_data.clear()
+            update_data()
+
+        add_button = tk.Button(mission_frame, text="Add", command=add_mission)
+        add_button.grid(row=1, column=0, padx=20, pady=5)
+        clear_button = tk.Button(mission_frame, text="Clear", command=clear_mission)
+        clear_button.grid(row=1, column=2, padx=20, pady=5)
+
+        self.p3 = ExpProcess(self.window_name_entry.get(), log_name, self.slider.get()
+                             , self.x_slider.get(), self.y_slider.get())
+
+        start_button = tk.Button(button_frame, text="Start", command=self.p_start)
+        start_button.grid(row=0, column=3, padx=20, pady=5)
+        stop_button = tk.Button(button_frame, text="Stop", command=self.p3.stop)
+        stop_button.grid(row=0, column=4, padx=20, pady=5)
+        save_button = tk.Button(button_frame, text="Save", command=self.save_config)
+        save_button.grid(row=0, column=5, padx=20, pady=5)
+
+        self.load_config_into_text_box()
+
+    def p_start(self):
+        if self.mission_data is not []:
+            self.p3.update(self.mission_data, self.window_name_entry.get(), self.log_name, self.slider.get(),
+                           self.x_slider.get(), self.y_slider.get())
+            self.p3.start()
+
+    def create_config_file_if_not_exists(self):
+        directory = os.path.dirname(self.config_file)
+        if not os.path.isdir(directory):
+            os.makedirs(directory, exist_ok=True)
+
+        if not os.path.isfile(self.config_file):
+            self.config['Settings'] = {'window_name': '模拟器', 'pass_threshold': '0.7'
+                    , 'x_offset': '0', "y_offset": "0"}
+            with open(self.config_file, 'w') as file:
+                self.config.write(file)
+
+    def load_config_into_text_box(self):
+        window_name = self.config.get('Settings', 'window_name', fallback='')
+        pass_threshold = self.config.get('Settings', 'pass_threshold', fallback='')
+        x_offset = self.config.get('Settings', 'x_offset', fallback='')
+        y_offset = self.config.get('Settings', 'y_offset', fallback='')
+        x, y, width, height = 0, 0, 0, 0
+        try:
+            window = gw.getWindowsWithTitle(window_name)[0]
+
+            # Activate the window
+            window.activate()
+
+            x, y, width, height = window.left, window.top, window.width, window.height
+
+        except Exception as e:
+            x, y, width, height = 0, 0, 900, 600
+
+        x_range = round(width / 3, -2)
+        y_range = round(height / 3, -2)
+
+        self.x_slider.config(from_=-x_range, to=x_range)
+        self.y_slider.config(from_=-y_range, to=y_range)
+        self.window_name_entry.insert(tk.END, window_name)
+        self.slider.set(float(pass_threshold))
+        self.x_slider.set(int(x_offset))
+        self.y_slider.set(int(y_offset))
+
+
+    def save_config(self):
+        window_name = self.window_name_entry.get()
+        pass_threshold = self.slider.get()
+        x_offset = self.x_slider.get()
+        y_offset = self.y_slider.get()
+        self.config['Settings'] = {'window_name': window_name, 'pass_threshold': pass_threshold,
+                                   'x_offset': x_offset, "y_offset": y_offset}
+        with open(self.config_file, 'w') as file:
+            self.config.write(file)
+
+
 class GUI:
 
     def __init__(self):
@@ -531,18 +769,26 @@ class GUI:
 
         frame1 = ttk.Frame(notebook)
         frame2 = ttk.Frame(notebook)
+        frame3 = ttk.Frame(notebook)
 
         notebook.add(frame1, text='Story Passer')
         notebook.add(frame2, text='Wish Helper')
+        notebook.add(frame3, text='Exp & SouJi Sequencer')
 
-        f1 = RunningFrame(frame1, self.log_name)
+        self.f1 = RunningFrame(frame1, self.log_name)
         # f1 = RunningFrame(frame1)
-        f2 = RunningFrame2(frame2, self.log_name)
-        stop_button = tk.Button(self.root, text="Quit", command=self.root.destroy)
+        self.f2 = RunningFrame2(frame2, self.log_name)
+        self.f3 = RunningFrame3(frame3, self.log_name)
+        stop_button = tk.Button(self.root, text="Quit", command=self.quit)
         stop_button.pack()
 
         self.root.after(100, self.update_text_widget)
         self.root.mainloop()
+
+    def quit(self):
+        self.f1.p1.stop()
+        self.f2.p1.stop()
+        self.root.destroy()
 
     def update_text_widget(self):
 

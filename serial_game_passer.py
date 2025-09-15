@@ -361,6 +361,26 @@ def start_fight(skip_mode,pass_threshold):
                     sys.stdout = old_stdout
                     print("Defeat!!!!!", flush=True)
                     exit()
+                if fight_action_passer_with_control("pics/lose.png", lower_threshold):
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/give_up.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_again.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_again_2.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_fight_ingame.png", pass_threshold)
+                    fight_action_passer_with_control("pics/start_again.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_again.png", lower_threshold)
+                    time.sleep(2)
+                    skip_now(skip_mode, "addition", pass_threshold)
+                    fight_action_passer_with_control("pics/auto_ingame.png", pass_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/auto_confirm.png", pass_threshold)
+                    skip_now(skip_mode, "addition2", pass_threshold)
+                    print("Lose and Continue!!!!!", flush=True)
+
                 skip_now(skip_mode,"", pass_threshold)
                 time.sleep(1)
                 if end_image_checker("pics/stage_clear.png", pass_threshold):
@@ -430,6 +450,25 @@ def start_fight(skip_mode,pass_threshold):
                     sys.stdout = old_stdout
                     print("Defeat!!!!!", flush=True)
                     exit()
+                if fight_action_passer_with_control("pics/lose.png", lower_threshold):
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/give_up.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_again.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_again_2.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_fight_ingame.png", pass_threshold)
+                    fight_action_passer_with_control("pics/start_again.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_again.png", lower_threshold)
+                    time.sleep(2)
+                    skip_now(skip_mode, "addition", pass_threshold)
+                    fight_action_passer_with_control("pics/auto_ingame.png", pass_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/auto_confirm.png", pass_threshold)
+                    skip_now(skip_mode, "addition2", pass_threshold)
+                    print("Lose and Continue!!!!!", flush=True)
                 fight_action_passer_with_control("pics/skip.png", pass_threshold)
                 time.sleep(1)
                 if end_image_checker("pics/stage_clear.png", pass_threshold):
@@ -560,17 +599,20 @@ def execute(diff, window_name, log_path, threshold, mode_of_check, x_num, y_num,
                     print("|||||||Story Passer Ending||||||||", flush=True)
                     switch_flag = False
                     stdout_to_file.stop()
-                    exit()
+                    return True
+
+                    # exit()
+
             time.sleep(1)
             if second_level_iter(skip_mode,diff, pass_threshold, mode_for_check):
                 print("返回一级", flush=True)
     except Exception as e:
         print(e, end="", flush=True)
         stdout_to_file.stop()
-        exit()
+        # exit()
     finally:
         stdout_to_file.stop()
-        exit()
+
 
 
 class StdoutToFile:
@@ -602,15 +644,207 @@ class StdoutToFile:
 # print (check_image_similar())
 # while True:
 #     auto_start()
+def menu_action_passer_with_control(path, digit1):
+    print(path, end=" ", flush=True)
+    icon_x, icon_y = None, None
+    for i in range(5):
+        time.sleep(0.1)
+        try:
+            icon_x, icon_y = check_image_similar_with_control(path, digit1)
+        except Exception as e:
+            print("*", end="", flush=True)
+        if icon_y is not None:
+            pyautogui.moveTo(icon_x , icon_y + y_offset)
+            pyautogui.click()
+            print("完成", flush=True)
+            return True
+
+    print(" 未发现.", flush=True)
+    return False
+
+
+
+def fuso_start_fight(skip_mode,pass_threshold,window_name):
+    # lower_threshold = 0.6
+    # higher_threshold = 0.9
+    global x, y, width, height
+    window = gw.getWindowsWithTitle(window_name)[0]
+
+    # Activate the window
+    window.activate()
+
+    # Get the coordinates of the window
+    x, y, width, height = window.left, window.top, window.width, window.height
+    print (x, y, width, height)
+    if pass_threshold > 0.8:
+        higher_threshold = 0.9
+    else:
+        higher_threshold = pass_threshold + 0.1
+    if pass_threshold < 0.25:
+        lower_threshold = 0.1
+    else:
+        lower_threshold = pass_threshold - 0.15
+
+        time.sleep(2)
+        fight_action_passer_with_control("pics/start_fight.png", pass_threshold)
+        time.sleep(1)
+        fight_action_passer_with_control("pics/refill.png", pass_threshold)
+        time.sleep(2)
+        fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+
+    for x in range(0, 5):
+        time.sleep(5)
+        print("###################", flush=True)
+        # fight_action_passer_with_control("pics/refill.png", pass_threshold)
+        pyautogui.click()
+        fight_action_passer_with_control("pics/start_fight_ingame.png", pass_threshold)
+        time.sleep(1)
+        fight_action_passer_with_control("pics/minor_level_start.png", pass_threshold)
+        time.sleep(2)
+        skip_now(skip_mode,"First", pass_threshold)
+        fight_action_passer_with_control("pics/start_fight_ingame.png", pass_threshold)
+        skip_now(skip_mode,"Second", pass_threshold)
+        fight_action_passer_with_control("pics/auto_ingame.png", pass_threshold)
+        time.sleep(2)
+        fight_action_passer_with_control("pics/auto_confirm.png", pass_threshold)
+        skip_now(skip_mode,"", pass_threshold)
+        # time.sleep(20)
+
+        print("start fetching end game image:", end=" ", flush=True)
+        with open(os.devnull, 'w') as devnull:
+            old_stdout = sys.stdout
+            sys.stdout = devnull
+            st_flag = False
+
+            succes_count = 0
+            for i in range(0, 1200):
+                if fight_action_passer_with_control("pics/over.png", pass_threshold):
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/give_up.png", lower_threshold)
+                    sys.stdout = old_stdout
+                    print("Defeat!!!!!", flush=True)
+                    break
+                if fight_action_passer_with_control("pics/lose.png", lower_threshold):
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/give_up.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_again.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_again_2.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_fight_ingame.png", pass_threshold)
+                    fight_action_passer_with_control("pics/start_again.png", lower_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/start_again.png", lower_threshold)
+                    time.sleep(2)
+                    skip_now(skip_mode, "addition", pass_threshold)
+                    fight_action_passer_with_control("pics/auto_ingame.png", pass_threshold)
+                    time.sleep(2)
+                    fight_action_passer_with_control("pics/auto_confirm.png", pass_threshold)
+                    skip_now(skip_mode, "addition2", pass_threshold)
+                    print("Lose and Continue!!!!!", flush=True)
+
+                skip_now(skip_mode,"", pass_threshold)
+                time.sleep(1)
+                if end_image_checker("pics/stage_clear.png", pass_threshold):
+                    st_flag = True
+                    break
+                elif end_image_checker("pics/stage_clear_part.png", higher_threshold):
+                    st_flag = True
+                    sys.stdout = old_stdout
+                    print("备用验证成功", end=" ", flush=True)
+                    break
+            sys.stdout = old_stdout
+            if st_flag:
+                pyautogui.click()
+                print("fetching SUCCESS", flush=True)
+            else:
+                print("fetching Failed", flush=True)
+
+    time.sleep(2)
+    pyautogui.moveTo((x + 20), (y + height / 2))
+    pyautogui.click()
+    skip_now(skip_mode,"First", pass_threshold)
+    pyautogui.click()
+    skip_now(skip_mode,"Second", pass_threshold)
+    pyautogui.click()
+    skip_now(skip_mode,"Thrid", pass_threshold)
+    pyautogui.click()
+    fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+    time.sleep(1)
+    fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+    time.sleep(1)
+    fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+    time.sleep(1)
+    fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+    time.sleep(1)
+    fight_action_passer_with_control("pics/aftergame_close.png", pass_threshold)
+    time.sleep(1)
+
+# def fusuo():
+#     global x, y, width, height
+#     diff = "_serial"
+#     window_name = "模拟器"
+#     log_name = "logs/" + "test" + ".txt"
+#     pass_threshold = 0.85
+#     mode = 2
+#     x_offset_num = 60
+#     y_offset_num = 20
+#     skip_mode = 1
+#
+#
+#     try:
+#         # window = gw.getWindowsWithTitle('MuMu模拟器12')[0]
+#
+#         window = gw.getWindowsWithTitle(window_name)[0]
+#
+#         # Activate the window
+#         window.activate()
+#
+#         # Get the coordinates of the window
+#         x, y, width, height = window.left, window.top, window.width, window.height
+#         count = 0
+#         while(True):
+#             if count > 2:
+#                 break
+#
+#             if main_stream_second_level_passer(diff,pass_threshold,2):
+#                 fuso_start_fight(skip_mode, pass_threshold, window_name)
+#
+#             else:
+#                 count = count + 1
+#                 pyautogui.moveTo((x + 20), (y + height / 2))
+#                 pyautogui.dragTo((x + 20), (y + height / 2 + 150), duration=1)
+#                 time.sleep(1)
+#     except IndexError:
+#         print("未找到窗口，检查窗口名", flush=True)
+#         exit()
+#     except Exception as e:
+#         print(e, end="", flush=True)
+#         exit()
+
+    # main_stream_second_level_passer(diff,pass_threshold,2)
+
+# fusuo()
 
 if __name__ == "__main__":
     diff = "_serial"
-    window_name = ""
+    # diff = ""
+    window_name = "chaos"
     log_name = "logs/" + "test" + ".txt"
-    pass_threshold = 0.78
+    pass_threshold = 0.9
     mode = 2
     x_offset_num = 60
     y_offset_num = 20
     skip_mode = 1
-    execute(diff, window_name, log_name, pass_threshold, mode,
-            x_offset_num, y_offset_num, skip_mode)
+
+    while True:
+        if menu_action_passer_with_control("pics/finish_chapter.png",0.85):
+            if menu_action_passer_with_control("pics/next_cha_button.png",0.85):
+                execute(diff, window_name, log_name, pass_threshold, mode,
+                        x_offset_num, y_offset_num, skip_mode)
+            else:
+                exit()
+        else:
+            execute(diff, window_name, log_name, pass_threshold, mode,
+                    x_offset_num, y_offset_num, skip_mode)
